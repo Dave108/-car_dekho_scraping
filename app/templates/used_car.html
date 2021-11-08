@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Used Cars</title>
+  </head>
+  <body>
+
+
+    <div class="container text-center">
+      <h1>Used Cars</h1>
+      <h2>We need your city to customize your experience</h2>
+      {% if car_list %}
+      <hr>
+      <h4>{{total_cars}}</h4>
+      <hr>
+      <div class="row mx-auto">
+      {% for data in car_list %}
+        <div class="col-sm-4">
+          <div class="card">
+            <img src="{{data.image_url}}" width="200px;">
+
+            <a href="{{data.url}}"><h5>{{data.name}}</h5></a>
+            <p>{{data.total_km}}</p>
+            <p>{{data.amount}}</p>
+          </div>
+
+        </div>
+      {% endfor %}
+      </div>
+
+      {% else %}
+        <div class="row mx-auto p-4">
+          <div class="col-sm-4 p-4">
+            <a href="?location=ahmedabad" class="btn btn-lg btn-outline-primary">Ahmedabad</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=bangalore" class="btn btn-lg btn-outline-primary">Bangalore</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=chennai" class="btn btn-lg btn-outline-primary">Chennai</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=delhi-ncr" class="btn btn-lg btn-outline-primary">Delhi NCR</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=gurgaon" class="btn btn-lg btn-outline-primary">Gurgaon</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=hyderabad" class="btn btn-lg btn-outline-primary">Hyderabad</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=jaipur" class="btn btn-lg btn-outline-primary">Jaipur</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=kolkata" class="btn btn-lg btn-outline-primary">Kolkata</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=mumbai" class="btn btn-lg btn-outline-primary">Mumbai</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=new-delhi" class="btn btn-lg btn-outline-primary">New Delhi</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=noida" class="btn btn-lg btn-outline-primary">Noida</a>
+          </div>
+          <div class="col-sm-4 p-4">
+            <a href="?location=pune" class="btn btn-lg btn-outline-primary">Pune</a>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+
+  </body>
+</html>
