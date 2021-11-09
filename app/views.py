@@ -2,6 +2,8 @@ from django.shortcuts import render
 import requests
 from bs4 import BeautifulSoup
 import time
+from django.utils.crypto import get_random_string
+import pandas as pd
 
 
 # Create your views here.
@@ -10,6 +12,10 @@ def homepage(request):
     return render(request, 'home.html')
 
 
+# print(price.text)
+# print(dotlist.text)
+# print(cars_image['src'])
+# print(cars.a, '---***---***---***---***---***---***---***---***')
 def new_car_view(request):
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) '
                              'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -17,32 +23,93 @@ def new_car_view(request):
     brand = request.GET.get('brand')
     context = None
     if brand:
-        print(brand)
+        # print(brand)
         car_dict = {}
         car_list = []
+        car_specs_dict = {}
+        car_specs_list = []
         url = 'https://www.cardekho.com{}'.format(brand)
-        # time.sleep(5)
         html_text = requests.get(url, headers=headers)
+        time.sleep(10)
         html_text = html_text.text
         soup = BeautifulSoup(html_text, 'lxml')
         # print(soup.prettify())
-        cars_summary = soup.find("section", class_="TableINPageCon shadow24 withRating carSummary readMoreLess")
+        cars_summary = soup.find("div", class_="gsc_col-md-8 gsc_col-lg-9 gsc_col-sm-12 gsc_col-xs-12 BrandDesc")
         # print(cars_summary.h1.text)
+        time.sleep(5)
         cars_data = soup.find_all('li', class_="gsc_col-xs-12 gsc_col-sm-6 gsc_col-md-12 gsc_col-lg-12")
         # print(cars_data)
         for cars in cars_data:
             cars_image = cars.find('img')
+            # time.sleep(6)
+            # print("...............vv",cars_image)
+
             price = cars.find('div', class_="price")
             dotlist = cars.find('div', class_="dotlist")
             if cars_image:
-                # print(price.text)
-                # print(dotlist.text)
-                # print(cars_image['src'])
-                print(cars.a, '---***---***---***---***---***---***---***---***')
+                url = 'https://www.cardekho.com{}'.format(cars.a['href'])
+                time.sleep(5)
+                html_text = requests.get(url, headers=headers)
+                html_text = html_text.text
+                soup = BeautifulSoup(html_text, 'html5lib')
+                car_specs = soup.find_all('tr', class_="gsc_col-xs-4 gsc_col-sm-2")
+                car_specs_dict = {}
+                for specs in car_specs:
+                    header = specs.find('span', class_="iconname")
+                    value = specs.find('td', class_="gsc_col-xs-12 textHold")
+                    dict1 = {header.text: value.text}
+                    # print(dict)
+                    car_specs_dict.update(dict1)
+                specs_link_find = soup.find('ul', class_="modelNavUl")
+                spec_link = specs_link_find.find_all('a')
+                final_spec_dict = {}
+                variants_list = []
+                for indlist in spec_link[1:]:
+                    if indlist.text == "Specs":
+                        spec_url = "https://www.cardekho.com" + indlist['href']
+                        # print(spec_url)
+                        html_text = requests.get(spec_url, headers=headers)
+                        time.sleep(0.5)
+                        html_text = html_text.text
+                        soup = BeautifulSoup(html_text, 'html5lib')
+                        specs_details = soup.find('div', id="technicalSpecsTop")
+                        details = specs_details.find_all('tr')
+                        # print(details, "------")
+
+                        for x in details:
+                            # print(x.td.text, ":", x.span.text)
+                            dict1 = {x.td.text: x.span.text}
+                            # print(dict1)
+                            final_spec_dict.update(dict1)
+                        # print(final_spec_dict)
+                    if indlist.text == "Variants":
+                        spec_url = "https://www.cardekho.com" + indlist['href']
+                        # print(spec_url)
+                        html_text = requests.get(spec_url, headers=headers)
+                        time.sleep(0.5)
+                        html_text = html_text.text
+                        soup = BeautifulSoup(html_text, 'html5lib')
+                        specs_details = soup.find('table', class_="allvariant contentHold").tbody
+                        # print(specs_details.td.a)
+                        for y in specs_details:
+                            # print(y.td.a.text)
+                            variants_list.append(y.td.a.text)
+                print(variants_list)
+                print("-----")
+                # print(final_spec_dict)
                 car_dict = {"image_url": cars_image['src'], "car_name": cars.a.text, "price": price.text,
-                            "dotlist": dotlist.text, "car_page": cars.a['href']}
+                            "dotlist": dotlist.text, "car_page": cars.a['href'], "variants_list": variants_list}
+                car_dict.update(car_specs_dict)
+                car_dict.update(final_spec_dict)
+                # print(car_dict)
                 car_list.append(car_dict)
-        # print(car_list)
+
+        df = pd.DataFrame(car_list)
+        # file_name = cars_summary.h1.text
+        # file_name = file_name.replace(" ", "_") + get_random_string(3) + ".csv"
+        # print(file_name)
+        # df.to_csv(file_name, index=False) #UN-COMMENT THIS LATER
+        print(df)
         context = {
             "brand_name": cars_summary.h1.text,
             "brand_summary": cars_summary.p.text,
@@ -61,9 +128,9 @@ def new_car_view(request):
             brand_image = cars.img['src']
             brand_name = cars.span.text
             brand_action = cars.a['href']
-            print(brand_action)
-            print(brand_name)
-            print("----------------------------------------------")
+            # print(brand_action)
+            # print(brand_name)
+            # print("----------------------------------------------")
             brand_dict = {"brand_image": brand_image, "brand_name": brand_name, "brand_action": brand_action}
             brand_list.append(brand_dict)
         context = {
