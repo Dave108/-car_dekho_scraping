@@ -94,8 +94,8 @@ def new_car_view(request):
                         for y in specs_details:
                             # print(y.td.a.text)
                             variants_list.append(y.td.a.text)
-                print(variants_list)
-                print("-----")
+                # print(variants_list)
+                # print("-----")
                 # print(final_spec_dict)
                 car_dict = {"image_url": cars_image['src'], "car_name": cars.a.text, "price": price.text,
                             "dotlist": dotlist.text, "car_page": cars.a['href'], "variants_list": variants_list}
